@@ -7,12 +7,22 @@
 #include <stdbool.h>
 #include <string.h>
 
-typedef struct vhash_iterator vhash_iterator;
-typedef struct vhash_item vhash_item;
 typedef struct vhash_table vhash_table;
 
+typedef struct {
+  char* Key;
+  void* Value;
+  uint64_t Hash;
+} vhash_item;
+
+typedef struct {
+  uint64_t Cursor;
+  uint64_t Count;
+  vhash_table* Table;
+} vhash_iterator;
 
 vhash_table* VHashTable_Init(uint64_t Capacity);
+void VHashTable_Free(vhash_table *Table);
 
 bool VHashTable_Insert(vhash_table* Table, char* Key, void* Value);
 void* VHashTable_Get(vhash_table* Table, const char* Key);

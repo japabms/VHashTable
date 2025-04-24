@@ -8,17 +8,6 @@
 // TODO:
 // - Add double hashing
 
-struct vhash_item {
-  char* Key;
-  void* Value;
-  uint64_t Hash;
-};
-
-struct vhash_iterator {
-  uint64_t Cursor;
-  vhash_table* Table;
-};
-
 struct vhash_table{
   vhash_item* Items;
   uint64_t Count;
@@ -28,6 +17,7 @@ struct vhash_table{
 vhash_iterator VHashTable_Iterator(vhash_table* Table) {
   vhash_iterator Result = {0};
   Result.Cursor = 0;
+  Result.Count = 0;
   Result.Table = Table;
 
   return Result;
@@ -44,6 +34,13 @@ vhash_table* VHashTable_Init(uint64_t Capacity) {
   Result->Capacity = Capacity;
   
   return Result;
+}
+
+void VHashTable_Free(vhash_table *Table) {
+  free(Table->Items);
+  free(Table);
+  Table->Items = NULL;
+  Table = NULL;
 }
 
 // djb2 hash function
@@ -133,10 +130,11 @@ void* VHashTable_Remove(vhash_table* Table, const char *Key) {
 
   while(Table->Items[Index].Key != NULL) {
     if(strcmp(Table->Items[Index].Key, Key) == 0) {
-      vhash_item Item = Table->Items[Index];
-      free(Item.Key);
+      vhash_item* Item = &Table->Items[Index];
+      free(Item->Key);
+      Item->Key = NULL;
       Table->Count -= 1;
-      return Item.Value;
+      return Item->Value;
     } else {
       Index = (Index+1) % Table->Capacity;          
     }
@@ -151,15 +149,18 @@ uint64_t VHashTable_Count(vhash_table* Table) {
 
 vhash_item *VHashTable_Next(vhash_iterator* Iterator) {
   vhash_item *Item;
-  if(Iterator->Cursor >= Iterator->Table->Capacity) {
+  if(Iterator->Cursor >= Iterator->Table->Capacity ||
+     Iterator->Count == Iterator->Table->Count) {
     return NULL;
-  }
+  } 
 
   while(VHashTable_ItemIsEmpty(Iterator->Table, Iterator->Cursor)) {
     Iterator->Cursor += 1;
   }
-  
+
   Item = &Iterator->Table->Items[Iterator->Cursor];
+  Iterator->Cursor += 1;
+  Iterator->Count += 1;
 
   return Item;
 }
