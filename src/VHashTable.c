@@ -1,7 +1,6 @@
 #include "VHashTable.h"
 #include <stdint.h>
 #include <string.h>
-#include <sys/types.h>
 
 #define INIT_V_HASH_TABLE_CAPACITY 16
 
@@ -44,7 +43,7 @@ void VHashTable_Free(vhash_table *Table) {
 }
 
 // djb2 hash function
-static uint64_t VHashTable_Hash(const char* Key) {
+static uint64_t VHashTable_Hash(const uint8_t* Key) {
     unsigned long Hash = 5381;
     int c;
     while ((c = *Key++))
@@ -79,7 +78,7 @@ static void VHashTable_Rehash(vhash_table* Table) {
   free(OldItems);
 }
 
-bool VHashTable_Insert(vhash_table* Table, char* Key, void* Value) {
+bool VHashTable_Insert(vhash_table* Table, uint8_t* Key, void* Value) {
   if(Table->Count >= Table->Capacity) {
     // TODO(victor): Rehash
     VHashTable_Rehash(Table);
@@ -110,7 +109,7 @@ bool VHashTable_Insert(vhash_table* Table, char* Key, void* Value) {
   return true;
 }
 
-void* VHashTable_Get(vhash_table* Table, const char *Key) {
+void* VHashTable_Get(vhash_table* Table, const uint8_t *Key) {
   uint64_t Hash = VHashTable_Hash(Key);
   uint64_t Index = Hash % Table->Capacity;
   while(Table->Items[Index].Key != NULL) {
@@ -124,7 +123,7 @@ void* VHashTable_Get(vhash_table* Table, const char *Key) {
   return NULL;
 }
 
-void* VHashTable_Remove(vhash_table* Table, const char *Key) {
+void* VHashTable_Remove(vhash_table* Table, const uint8_t* Key) {
   uint64_t Hash = VHashTable_Hash(Key);
   uint64_t Index = Hash % Table->Capacity;
 

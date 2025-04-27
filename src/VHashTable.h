@@ -24,9 +24,9 @@ typedef struct {
 vhash_table* VHashTable_Init(uint64_t Capacity);
 void VHashTable_Free(vhash_table *Table);
 
-bool VHashTable_Insert(vhash_table* Table, char* Key, void* Value);
-void* VHashTable_Get(vhash_table* Table, const char* Key);
-void* VHashTable_Remove(vhash_table* Table, const char *Key);
+bool VHashTable_Insert(vhash_table* Table, uint8_t* Key, void* Value);
+void* VHashTable_Get(vhash_table* Table, const uint8_t* Key);
+void* VHashTable_Remove(vhash_table* Table, const uint8_t* Key);
 
 uint64_t VHashTable_Count(vhash_table* Table);
 
