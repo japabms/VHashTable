@@ -38,8 +38,6 @@ vhash_table* VHashTable_Init(uint64_t Capacity) {
 void VHashTable_Free(vhash_table *Table) {
   free(Table->Items);
   free(Table);
-  Table->Items = NULL;
-  Table = NULL;
 }
 
 // djb2 hash function
