@@ -8,13 +8,13 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Build)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/Binaries)
 
 # Lib estática
-add_library(vhash_static STATIC src/VHashTable.c)
+add_library(vhash_static STATIC src/vhash_table.c)
 target_compile_options(vhash_static PRIVATE -g)
 set_target_properties(vhash_static PROPERTIES OUTPUT_NAME "vhash")
 target_include_directories(vhash_static PUBLIC src)
 
 # Lib compartilhada
-add_library(vhash_shared SHARED src/VHashTable.c)
+add_library(vhash_shared SHARED src/vhash_table.c)
 target_compile_options(vhash_shared PRIVATE -g)
 set_target_properties(vhash_shared PROPERTIES OUTPUT_NAME "vhash")
 target_include_directories(vhash_shared PUBLIC src)
