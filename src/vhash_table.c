@@ -39,7 +39,7 @@ vhash_table* VHashTable_Init(u64 Capacity) {
 }
 
 void VHashTable_Free(vhash_table *Table) {
-  for(s32 Idx = 0; Idx < Table->Count; Idx++) {
+  for(s32 Idx = 0; Idx < Table->Capacity; Idx++) {
     if(Table->Items[Idx].Key != NULL) {
       free(Table->Items[Idx].Key);
       if(Table->Items[Idx].Value != NULL) {
@@ -93,25 +93,23 @@ bool VHashTable_Insert(vhash_table* Table, vhash_key* Key, vhash_value* Value, u
     // TODO(victor): Rehash
     VHashTable_Rehash(Table);
   }
-  vhash_item Item;
+  vhash_item Item = {0};
   
   vhash_value* NewValue = calloc(1, SizeofValue);
   memcpy(NewValue, Value, SizeofValue);
   
   Item.Key = (uchar*) strdup(Key);
   Item.Value = NewValue;
-
-  u64 Hash = VHashTable_Hash(Key);
-  Item.Hash = Hash;
+  Item.Hash =VHashTable_Hash(Key);
   
-  u64 Index = Hash % Table->Capacity;
+  u64 Index = Item.Hash % Table->Capacity;
   while(!VHashTable_ItemIsEmpty(Table, Index)) {
-    if(strcmp(Table->Items[Index].Key, Key) == 0) {
+    if(strcmp(Table->Items[Index].Key, Item.Key) == 0) {
       // Replacing the value if already exist
       free(Item.Key);
       free(Table->Items[Index].Value);
       
-      Table->Items[Index].Value = Value;
+      Table->Items[Index].Value = Item.Value;
       return true;
     } else {
       // Linear Probing
